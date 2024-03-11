@@ -28,6 +28,7 @@ import (
 	"opensearch.opster.io/pkg/helpers"
 	"opensearch.opster.io/pkg/reconcilers"
 
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -146,7 +147,7 @@ func (r *OpenSearchClusterReconciler) Reconcile(ctx context.Context, req ctrl.Re
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *OpenSearchClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *OpenSearchClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.Options) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&opsterv1.OpenSearchCluster{}).
 		Owns(&corev1.Pod{}).
@@ -155,6 +156,7 @@ func (r *OpenSearchClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.Service{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&appsv1.StatefulSet{}).
+		WithOptions(opts).
 		Complete(r)
 }
 
