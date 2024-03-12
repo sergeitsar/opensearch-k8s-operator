@@ -35,6 +35,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/config"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
@@ -57,6 +58,8 @@ func main() {
 	var probeAddr string
 	var watchNamespace string
 	var logLevel string
+	var maxConcurrentReconciles int
+	flag.IntVar(&maxConcurrentReconciles, "max-concurrent-reconciles", 16, "Max concurrent reconcile workers.")
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
@@ -98,6 +101,7 @@ func main() {
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "a867c7dc.opensearch.opster.io",
 		Namespace:              watchNamespace,
+		Controller:             config.Controller{MaxConcurrentReconciles: maxConcurrentReconciles},
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
