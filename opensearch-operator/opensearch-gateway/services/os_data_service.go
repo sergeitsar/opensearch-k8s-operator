@@ -276,7 +276,8 @@ func continueRestartWithYellowHealth(health responses.ClusterHealthResponse) boo
 		return false
 	}
 
-	if health.RelocatingShards > 0 || health.InitializingShards > 0 || health.UnassignedShards > 1 {
+	// if health.RelocatingShards > 0 || health.InitializingShards > 0 || health.UnassignedShards > 1 {
+	if health.RelocatingShards > 0 || health.InitializingShards > 0 {
 		return false
 	}
 
